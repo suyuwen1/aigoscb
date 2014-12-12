@@ -31,14 +31,17 @@
     			$d=opendir($this->p);
     			while ($f=readdir($d)) {
     			//echo $f.'<br>';
-    				$this->p=$this->p.'/'.$f;
-    				if (is_dir($this->p)) {
-    					$dirs['d'][]=$f;
-    				}else{
-    					$dirs['f'][]=$f;
-    					echo $this->p;
-    					$dirs['t'][]=filectime($this->p);
+    				if ($f!='.' and $f != '..') {
+    					$np=$this->p.'/'.$f;
+    					if (is_dir($np)) {
+    						$dirs['d'][]=$f;
+    					}else{
+    						$dirs['f'][]=$f;
+    					echo $np.'<br>';
+    						$dirs['t'][]=filectime($np);
+    					}
     				}
+    				
     			}
     			closedir($d);
     		}
