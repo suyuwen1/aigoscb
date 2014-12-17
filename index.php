@@ -1,14 +1,23 @@
-<?php 
-	if (!empty($_POST['u']) and !empty($_POST['p'])) {
-		if ($_POST['u']=='aigoscb' and $_POST['p']=='aigoscb') {
+<?php
+	if (!empty($_POST['u']) && !empty($_POST['p'])) {
+		if ($_POST['u']=='aigoscb' && $_POST['p']=='aigoscb') {
 			setcookie('is',1);
+			$is=1;
 		}else{
 			setcookie('is',2);
+			$is=2;
 		}
-		
-	}else{
-		setcookie('is',0);
 	}
+	if (empty($_COOKIE['is'])) {
+		if (empty($is)) {
+			$is=0;
+		}
+	}else{
+		if ($_COOKIE['is']==1) {
+			$is=1;
+		}
+	}
+	//echo $is;
 ?>
 <!DOCTYPE html>
 <html>
@@ -100,6 +109,9 @@ $v=$r->data();
             border-top: solid 2px #cccccc;
             border-bottom: solid 2px #cccccc;
             margin: 10px 0px 10px 0px;
+            /* -moz-user-select:none;
+               			-webkit-user-select: none;
+               			user-select: none; */
         }
         img{
         	vertical-align: middle;
@@ -113,9 +125,13 @@ $v=$r->data();
             vertical-align: middle;
         }
         #sc{
-        	position: fixed;
-        	top: 100px;
-        	right: 100px;
+        	margin: 70px 0px 0px 80px;
+        	min-width: 200px;
+        	float: left;
+        	position: relative;
+        }
+        #sc_c{
+			position: fixed;
         }
         #sc a{
         	text-decoration: none;
@@ -133,7 +149,6 @@ $v=$r->data();
         }
         #lg{
         	position: fixed;
-        	background-color: green;
         	text-align: center;
         	height: 100%;
         	width: 100%;
@@ -163,9 +178,44 @@ $v=$r->data();
         	margin: 10px;
         }
    </style>
+   <script src="zeroclipboard/ZeroClipboard.js" type="text/javascript"></script>
+   <script type="text/javascript">
+   		function copyToClipboard(txt) {
+        //引入 Zero Clipboard flash文件   
+        ZeroClipboard.setMoviePath( "zeroclipboard/ZeroClipboard.swf" );
+        //新建对象   
+        clip = new ZeroClipboard.Client();
+        //设置指向光标为手型   
+        clip.setHandCursor( true );
+        //通过传入的参数设置剪贴板内容   
+        clip.setText(txt);
+        //添加监听器，完成点击复制后弹出警告   
+        clip.addEventListener("complete", function (client, text) {
+            alert("复制成功！");
+        });
+        //绑定触发对象按钮ID
+        clip.glue("copyurl1");   
+    }
+    function copyToClipboard2(txt) {
+        //引入 Zero Clipboard flash文件   
+        ZeroClipboard.setMoviePath( "zeroclipboard/ZeroClipboard.swf" );
+        //新建对象   
+        clip = new ZeroClipboard.Client();
+        //设置指向光标为手型   
+        clip.setHandCursor( true );
+        //通过传入的参数设置剪贴板内容   
+        clip.setText(txt);
+        //添加监听器，完成点击复制后弹出警告   
+        clip.addEventListener("complete", function (client, text) {
+            alert("复制成功！");
+        });
+        //绑定触发对象按钮ID
+        clip.glue("copyurl2");   
+    }
+   </script>
 </head>
 <body>
-<div id="m" style="width:600px;padding:20px">
+<div id="m" style="width:600px;padding:20px;float:left">
     <div id="t">
         <div style="font-size:30px;padding-bottom:20px"><a style="color:blue;text-decoration:none" href="?p=.">主目录</a><?php echo urldecode($v['p']);?></div>
         <a href="?p=<?php echo urlencode($v['p']); ?>" style="color:blue;float:left;font-size:20px;text-decoration:none">名称排序</a>
@@ -209,37 +259,35 @@ $v=$r->data();
         <div class="cls"></div>
     </div>
 </div>
+
 <div id="sc">
-	<p><a onclick="return false" href="ftp://172.16.3.106/">主目录上传</a></p>
-	<p><a onclick="return false" href="ftp://172.16.3.106<?php echo urldecode($v['p']);?>">当前目录上传</a></p>
+	<div id="sc_c">
+	<p style="font-weight:bold"><a onclick="copyurl(this)">上传地址</a></p>
+	<p><span style="color:red">主目录上传：</span><span id="copyurl1" style="color:green" onmouseover="copyToClipboard('ftp://172.16.3.106')">ftp://172.16.3.106</span></p>
+	<?php
+		if (urldecode($v['p'])!='/') {
+			echo '<p><span style="color:red">当前目录上传：</span><span id="copyurl2" onmouseover="copyToClipboard2('."'".'ftp://172.16.3.106'.urldecode($v['p'])."'".')" style="color:green">ftp://172.16.3.106'.urldecode($v['p']).'</span></p>';
+		}
+	?>
 	<!-- <p><a href="javascript:help()">帮助</a></p> -->
-</div>
-<?php
-echo <<<END
-<div id="lg">
-	<div id="lg_c">
-		<form method="post">
-		<div><span class="lg_c_l">用户名：</span><span class="lg_c_r"><input type="text"></span><div class="cls"></div></div>
-		<div><span class="lg_c_l">密码：</span><span class="lg_c_r"><input type="password"></span><div class="cls"></div></div>
-		<div class="lg_c_b"><button type="submit">登陆</button></div>
-		</form>
 	</div>
 </div>
-END;
-	if ($_COOKIE['is']==) {
+<?php
+	if ($is==2 || $is==0) {
+		$e=($is==2) ? '用户名或密码错误' : '' ;
 		echo <<< END
 <div id="lg">
 	<div id="lg_c">
 		<form method="post">
-		<div><span class="lg_c_l">用户名：</span><span class="lg_c_r"><input type="text"></span><div class="cls"></div></div>
-		<div><span class="lg_c_l">密码：</span><span class="lg_c_r"><input type="password"></span><div class="cls"></div></div>
+		<div><span class="lg_c_l">用户名：</span><span class="lg_c_r"><input type="text" name="u"></span><div class="cls"></div></div>
+		<div><span class="lg_c_l">密码：</span><span class="lg_c_r"><input type="password" name="p"></span><div class="cls"></div></div>
 		<div class="lg_c_b"><button type="submit">登陆</button></div>
+		<div style="color:#FF8000">$e</div>
 		</form>
 	</div>
 </div>		
 END;
 	}
 ?>
-
 </body>
 </html>
