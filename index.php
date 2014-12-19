@@ -1,7 +1,12 @@
 <?php
+	/**
+	 * '用户名' => array('目录','密码')
+	 */
+	$syb = array('市场部' => array('','aigoscb'), '互联存储' => array('aigocc','aigocc'), '平板电脑' => array('aigopb','aigopb'), '移动数码' => array('aigosm','aigosm'), '数字音频' => array('aigoyp','aigoyp'));
 	if (!empty($_POST['u']) && !empty($_POST['pw'])) {
-		if ($_POST['u']=='aigoscb' && $_POST['pw']=='aigoscb') {
+		if ($syb[$_POST['u']][1]==$_POST['pw']) {
 			setcookie('is',1);
+			setcookie('syb',$_POST['u'][0]);
 			$is=1;
 		}else{
 			setcookie('is',2);
@@ -288,11 +293,15 @@ if (!empty($_GET['n'])) {
 <?php
 	if ($is==2 || $is==0) {
 		$e=($is==2) ? '用户名或密码错误' : '' ;
+		$es='';
+		foreach ($syb as $key => $v) {
+			$es.='<option value="'.$key.'">'.$key.'</option>';
+		}
 		echo <<< END
 <div id="lg">
 	<div id="lg_c">
 		<form method="post">
-		<div><span class="lg_c_l">用户名：</span><span class="lg_c_r"><input type="text" name="u"></span><div class="cls"></div></div>
+		<div><span class="lg_c_l">用户名：</span><span class="lg_c_r"><select name="u">$es</select></span><div class="cls"></div></div>
 		<div><span class="lg_c_l">密码：</span><span class="lg_c_r"><input type="password" name="pw"></span><div class="cls"></div></div>
 		<div class="lg_c_b"><button type="submit">登陆</button></div>
 		<div style="color:#FF8000">$e</div>
