@@ -2,17 +2,19 @@
 	/**
 	 * '用户名' => array('目录','密码')
 	 */
-	$syb = array('市场部' => array('','aigoscb'), '互联存储' => array('aigocc','aigocc'), '平板电脑' => array('aigopb','aigopb'), '移动数码' => array('aigosm','aigosm'), '数字音频' => array('aigoyp','aigoyp'));
+    //var_dump($_POST);
+	$syb = array('市场部' => array('/','aigoscb'), '互联存储' => array('aigocc','aigocc'), '平板电脑' => array('aigopb','aigopb'), '移动数码' => array('aigosm','aigosm'), '数字音频' => array('aigoyp','aigoyp'));
 	if (!empty($_POST['u']) && !empty($_POST['pw'])) {
 		if ($syb[$_POST['u']][1]==$_POST['pw']) {
 			setcookie('is',1);
-			setcookie('syb',$_POST['u'][0]);
+			setcookie('syb','/'.$syb[$_POST['u']][0].'/');
 			$is=1;
 		}else{
 			setcookie('is',2);
 			$is=2;
 		}
 	}else{
+        //setcookie('syb','');
 		if (empty($_GET['n'])) {
 				$is=0;
 			}else{
@@ -57,13 +59,14 @@ class Rdir
         $this->dirs=array();
         // echo $this->p;
         
-        $pp = ($this->p=='.') ? '.' : '.'.$this->p;
+        $pp = ($this->p=='/') ? '.' : '.'.$this->p;
+        //echo $pp;
         $d=opendir($pp);
         while ($f=readdir($d)) {
                 //echo $f.'<br>';
             if ($f!='.' and $f != '..' and $f!='index.php' and $f!='icos' and $f!='zeroclipboard') {
                 // $np='.'.$this->p.'/'.$f;
-                $np = ($this->p=='.') ? './'.$f : '.'.$this->p.$f ;
+                $np = ($this->p=='/') ? './'.$f : '.'.$this->p.$f ;
                 if (is_dir($np)) {
                     $this->dirs['t'][]='d';
                 }else{
@@ -75,7 +78,7 @@ class Rdir
             }
         }
         closedir($d);
-        $this->dirs['p'] = iconv("gb2312","UTF-8",(($this->p=='.') ? '/' : $this->p)) ;
+        $this->dirs['p'] = iconv("gb2312","UTF-8",(($this->p=='/') ? '/' : $this->p)) ;
         // $this->dirs['p']=$this->p;
         if (!empty($this->dirs['f'])) {
             $this->default_filesort();
@@ -103,10 +106,20 @@ class Rdir
         return $this->dirs;
     }
 }
-
-// var_dump($v->data());
+if (empty($_COOKIE['syb'])) {
+    if (empty($_POST['u'])) {
+        $syb2='/';
+    }else{
+        $syb2='/'.$syb[$_POST['u']][0].'/';
+    }
+}else{
+    $syb2=$_COOKIE['syb'];
+}
+//@$syb2 = (empty($_POST['u'])) ? $_COOKIE['syb'] : '/'.$syb[$_POST['u']][0].'/' ;
+$syb2 = ($syb2=='///') ? '/' : $syb2 ;
+//echo $syb2;
 if (empty($_GET['p'])) {
-    $r=new Rdir('.');
+    $r=new Rdir($syb2);
 }else{
     $r=new Rdir(urldecode($_GET['p']));
 }
@@ -223,7 +236,7 @@ if (!empty($_GET['n'])) {
 	$nn=$nnd='';
 }
 ?>
-<div style="font-size:30px;padding:20px 20px 0px 20px"><a style="color:blue;text-decoration:none" href="?p=.">主目录</a><?php echo urldecode($v['p']);?></div>
+<div style="font-size:30px;padding:20px 20px 0px 20px"><a style="color:blue;text-decoration:none" href="?p=<?php echo urlencode($syb2) ?>">主目录</a><?php echo urldecode(($v['p']==$syb2)?'':$v['p']);?></div>
 <div id="m" style="width:600px;padding:20px;float:left">
     <div id="t">
         <a href="?p=<?php echo urlencode($v['p']).$nn; ?>" style="color:blue;float:left;font-size:20px;text-decoration:none">名称排序</a>
@@ -233,7 +246,7 @@ if (!empty($_GET['n'])) {
     <div id="d">
         <span style="float:left;width:480px;overflow:hidden">
             <?php
-                if ($v['p']!='/' && $v['p']!=$n) {
+                if ($v['p']!=$syb2 && $v['p']!=$n) {
                     echo '<div><img src="icos/t.png"> <a style="color:blue;text-decoration:none" href="?p='.urlencode((dirname($v['p'])=='\\') ? '/' : dirname($v['p']).'/').$nn.'">[上级目录]</a></div>';
                 }
                 if (!empty($v['f'])) {
@@ -255,7 +268,7 @@ if (!empty($_GET['n'])) {
         </span>
         <span style="float:right;width:100px">
             <?php
-                if ($v['p']!='/' && $v['p']!=$n) {
+                if ($v['p']!=$syb2 && $v['p']!=$n) {
                     echo '<div>&nbsp</div>';
                 }
                 //var_dump($v);
@@ -274,9 +287,9 @@ if (!empty($_GET['n'])) {
 <div id="sc" <?php echo ($n=='') ? '' : 'style="display:none"' ; ?>>
 	<div id="sc_c">
 	<p style="font-weight:bold"><a onclick="copyurl(this)">上传地址</a></p>
-	<p><span style="color:red">主目录上传：</span><span id="copyurl1" style="color:green" onmouseover="copyToClipboard('copyurl1','ftp://172.16.3.106')">ftp://172.16.3.106</span></p>
+	<p><span style="color:red">主目录上传：</span><span id="copyurl1" style="color:green" onmouseover="copyToClipboard('copyurl1','ftp://172.16.3.106'<?php echo $syb2;?>)">ftp://172.16.3.106<?php echo $syb2;?></span></p>
 	<?php
-		if (urldecode($v['p'])!='/') {
+		if (urldecode($v['p'])!=$syb2) {
 			echo '<p><span style="color:red">当前目录上传：</span><span id="copyurl2" onmouseover="copyToClipboard(\'copyurl2'."','".'ftp://172.16.3.106'.urldecode($v['p'])."'".')" style="color:green">ftp://172.16.3.106'.urldecode($v['p']).'</span></p>';
 		}
 	?>
