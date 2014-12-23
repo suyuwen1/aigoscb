@@ -3,7 +3,7 @@
 	 * '用户名' => array('目录','密码')
 	 */
     //var_dump($_POST);
-	$syb = array('市场部' => array('/','aigoscb'), '互联存储' => array('aigocc','aigocc'), '平板电脑' => array('aigopb','aigopb'), '移动数码' => array('aigosm','aigosm'), '数字音频' => array('aigoyp','aigoyp'));
+	$syb = array('市场部' => array('/','aigoscb'), '互联存储' => array('互联存储','aigocc'), '平板电脑' => array('平板电脑','aigopb'), '移动数码' => array('移动数码','aigosm'), '数字音频' => array('数字音频','aigoyp'), '智能家电' => array('智能家电','aigojd'), '互联网营销中心' => array('互联网营销中心','aigoyx'));
 	if (!empty($_POST['u']) && !empty($_POST['pw'])) {
 		if ($syb[$_POST['u']][1]==$_POST['pw']) {
 			setcookie('is',1);
@@ -287,7 +287,7 @@ if (!empty($_GET['n'])) {
 <div id="sc" <?php echo ($n=='') ? '' : 'style="display:none"' ; ?>>
 	<div id="sc_c">
 	<p style="font-weight:bold"><a onclick="copyurl(this)">上传地址</a></p>
-	<p><span style="color:red">主目录上传：</span><span id="copyurl1" style="color:green" onmouseover="copyToClipboard('copyurl1','ftp://172.16.3.106'<?php echo $syb2;?>)">ftp://172.16.3.106<?php echo $syb2;?></span></p>
+	<p><span style="color:red">主目录上传：</span><span id="copyurl1" style="color:green" onmouseover="copyToClipboard('copyurl1','ftp://172.16.3.106<?php echo $syb2;?>')">ftp://172.16.3.106<?php echo $syb2;?></span></p>
 	<?php
 		if (urldecode($v['p'])!=$syb2) {
 			echo '<p><span style="color:red">当前目录上传：</span><span id="copyurl2" onmouseover="copyToClipboard(\'copyurl2'."','".'ftp://172.16.3.106'.urldecode($v['p'])."'".')" style="color:green">ftp://172.16.3.106'.urldecode($v['p']).'</span></p>';
