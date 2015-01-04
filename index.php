@@ -3,7 +3,7 @@
 	 * '用户名' => array('目录','密码')
 	 */
     //var_dump($_POST);
-	$syb = array('市场部' => array('/','aigoscb'), '互联存储' => array('互联存储','aigocc'), '平板电脑' => array('平板电脑','aigopb'), '移动数码' => array('移动数码','aigosm'), '数字音频' => array('数字音频','aigoyp'), '智能家电' => array('智能家电','aigojd'), '互联网营销中心' => array('互联网营销中心','aigoyx'));
+	$syb = array('市场部' => array('/','aigoscb'), '互联存储' => array('互联存储','aigocc'), '平板电脑' => array('平板电脑','aigopb'), '移动数码' => array('移动数码','aigosm'), '数字音频' => array('数字音频','aigoyp'), '智能家电' => array('智能家电','aigojd'), '互联网营销中心' => array('互联网营销中心','aigoyx'), '大客户' => array('大客户','aigodkh'));
 	if (!empty($_POST['u']) && !empty($_POST['pw'])) {
 		if ($syb[$_POST['u']][1]==$_POST['pw']) {
 			setcookie('is',1);
@@ -246,6 +246,8 @@ if (!empty($_GET['n'])) {
     <div id="d">
         <span style="float:left;width:480px;overflow:hidden">
             <?php
+            	//echo $v['p'].'-<br>-';
+            	//echo $n;
                 if ($v['p']!=$syb2 && $v['p']!=$n) {
                     echo '<div><img src="icos/t.png"> <a style="color:blue;text-decoration:none" href="?p='.urlencode((dirname($v['p'])=='\\') ? '/' : dirname($v['p']).'/').$nn.'">[上级目录]</a></div>';
                 }
