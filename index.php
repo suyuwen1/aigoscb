@@ -36,6 +36,17 @@
 		$n='';
 	}
 	//echo $is;
+		//echo str_code('/','/fasdf/中国23/23/');
+	function str_code($a,$b){
+		$v=explode($a,$b);
+		$v1=array_map("str_urlde",$v);
+		//var_dump($v);
+		return join("/",$v1);
+		}
+	function str_urlde($a){
+		//echo urlencode($a);
+		return urlencode($a);
+		}
 ?>
 <!DOCTYPE html>
 <html>
